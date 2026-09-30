@@ -1,4 +1,4 @@
-```groovy
+
 pipeline {
     agent any
 
@@ -142,4 +142,4 @@ Error: Jenkins Pipeline Failed"
         }
     }
 }
-```
+
