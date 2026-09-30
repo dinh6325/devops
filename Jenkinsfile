@@ -27,6 +27,9 @@ pipeline {
                     string(credentialsId: 'telegram-chat-id', variable: 'TELEGRAM_CHAT_ID')
                 ]) {
                     sh '''
+                        TELEGRAM_TOKEN=$(printf '%s' "$TELEGRAM_TOKEN" | tr -d '\\r\\n ')
+                        TELEGRAM_CHAT_ID=$(printf '%s' "$TELEGRAM_CHAT_ID" | tr -d '\\r\\n ')
+
                         COMMIT=$(git rev-parse --short HEAD)
 
                         MESSAGE="🚀 Bắt đầu deploy website
@@ -34,10 +37,11 @@ Repository: ${REPOSITORY}
 Branch: ${BRANCH}
 Commit: ${COMMIT}"
 
-                        curl -s -X POST \
+                        curl -sS \
+                            -X POST \
                             "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-                            -d chat_id="${TELEGRAM_CHAT_ID}" \
-                            --data-urlencode text="${MESSAGE}"
+                            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                            --data-urlencode "text=${MESSAGE}"
                     '''
                 }
             }
@@ -103,15 +107,19 @@ Commit: ${COMMIT}"
                     string(credentialsId: 'telegram-chat-id', variable: 'TELEGRAM_CHAT_ID')
                 ]) {
                     sh '''
+                        TELEGRAM_TOKEN=$(printf '%s' "$TELEGRAM_TOKEN" | tr -d '\\r\\n ')
+                        TELEGRAM_CHAT_ID=$(printf '%s' "$TELEGRAM_CHAT_ID" | tr -d '\\r\\n ')
+
                         MESSAGE="✅ Deploy thành công
 Repository: ${REPOSITORY}
 Branch: ${BRANCH}
 Website: ${VERCEL_URL}"
 
-                        curl -s -X POST \
+                        curl -sS \
+                            -X POST \
                             "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-                            -d chat_id="${TELEGRAM_CHAT_ID}" \
-                            --data-urlencode text="${MESSAGE}"
+                            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                            --data-urlencode "text=${MESSAGE}"
                     '''
                 }
             }
@@ -125,6 +133,9 @@ Website: ${VERCEL_URL}"
                 string(credentialsId: 'telegram-chat-id', variable: 'TELEGRAM_CHAT_ID')
             ]) {
                 sh '''
+                    TELEGRAM_TOKEN=$(printf '%s' "$TELEGRAM_TOKEN" | tr -d '\\r\\n ')
+                    TELEGRAM_CHAT_ID=$(printf '%s' "$TELEGRAM_CHAT_ID" | tr -d '\\r\\n ')
+
                     COMMIT=$(git rev-parse --short HEAD)
 
                     MESSAGE="❌ Deploy thất bại
@@ -133,10 +144,11 @@ Branch: ${BRANCH}
 Commit: ${COMMIT}
 Error: Jenkins Pipeline Failed"
 
-                    curl -s -X POST \
+                    curl -sS \
+                        -X POST \
                         "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-                        -d chat_id="${TELEGRAM_CHAT_ID}" \
-                        --data-urlencode text="${MESSAGE}"
+                        -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                        --data-urlencode "text=${MESSAGE}" || true
                 '''
             }
         }
