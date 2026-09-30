@@ -37,5 +37,15 @@ pipeline {
                 echo 'Testing website...'
             }
         }
+
+        stage('Install Vercel CLI') {
+            steps {
+                sh '''
+                    echo "===== Install Vercel CLI ====="
+                    npm install -g vercel
+                    vercel --version
+                '''
+            }
+        }
     }
 }
