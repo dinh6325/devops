@@ -47,5 +47,21 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy to Vercel') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'vercel-token',
+                        variable: 'VERCEL_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        echo "===== Deploy to Vercel ====="
+                        vercel --prod --yes --token "$VERCEL_TOKEN"
+                    '''
+                }
+            }
+        }
     }
 }
