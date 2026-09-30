@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent any
 
@@ -71,15 +72,20 @@ Commit: ${COMMIT}"
 
         stage('Install Vercel CLI') {
             steps {
-                npm install -g vercel
-                vercel --version
+                sh '''
+                    npm install -g vercel
+                    vercel --version
+                '''
             }
         }
 
         stage('Deploy to Vercel') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN')
+                    string(
+                        credentialsId: 'vercel-token',
+                        variable: 'VERCEL_TOKEN'
+                    )
                 ]) {
                     sh '''
                         vercel --prod --yes \
@@ -136,3 +142,4 @@ Error: Jenkins Pipeline Failed"
         }
     }
 }
+```
