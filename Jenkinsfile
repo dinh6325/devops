@@ -2,11 +2,10 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS-22'
+        nodejs 'NodeJS'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -16,10 +15,7 @@ pipeline {
         stage('Check Node') {
             steps {
                 sh '''
-                    echo "===== Node.js ====="
                     node --version
-
-                    echo "===== npm ====="
                     npm --version
                 '''
             }
@@ -27,21 +23,25 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building website...'
-                sh 'ls -la'
+                sh '''
+                    ls -la
+                    test -f index.html
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Testing website...'
+                sh '''
+                    test -f index.html
+                    echo "index.html exists"
+                '''
             }
         }
 
         stage('Install Vercel CLI') {
             steps {
                 sh '''
-                    echo "===== Install Vercel CLI ====="
                     npm install -g vercel
                     vercel --version
                 '''
@@ -57,8 +57,9 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        echo "===== Deploy to Vercel ====="
-                        vercel --prod --yes --token "$VERCEL_TOKEN"
+                        vercel --prod --yes \
+                            --token "$VERCEL_TOKEN" \
+                            --name devops
                     '''
                 }
             }
